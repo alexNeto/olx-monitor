@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "139cb2b9-2e24-4c97-8681-ab430bffb4b7",
+		"name": "olx-monitor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "olx-monitor",
+			"item": [
+				{
+					"name": "get olx monitor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/olx-monitor",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"olx-monitor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get olx monitor type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/olx-monitor/types",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"olx-monitor",
+								"types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add new olx monitor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "   { \n       \"chatId\": \"{{chatId}}\",\n       \"urlToMonitor\": \"{{urlToMonitor}}\"\n   }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/olx-monitor",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"olx-monitor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update new olx monitor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        \"id\": 1,\n        \"username\": null,\n        \"chatId\": 358323464,\n        \"messageId\": null,\n        \"urlToMonitor\": \"https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/vale-do-paraiba/sao-jose-dos-campos/imoveis/aluguel/casas?pe=1600&ps=1000\",\n        \"monitorType\": \"HOME\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/olx-monitor",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"olx-monitor"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "home-monitor",
+			"item": [
+				{
+					"name": "get all results by olx-monitor-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/home-monitor/1/results",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"home-monitor",
+								"1",
+								"results"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

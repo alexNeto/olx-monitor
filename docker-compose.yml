@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:1.21.1-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "3000:80"
+  olx-monitor:
+    build: .
+    image: olx-monitor:latest
+    depends_on:
+      - database
+      - nginx
+    environment:
+      - BOT_USERNAME=${BOT_USERNAME}
+      - BOT_TOKEN=${BOT_TOKEN}
+  database:
+    image: postgres:14.1
+    container_name: olx-monitor-database
+    environment:
+      - POSTGRES_ROOT_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=olx-monitor-db
+      - POSTGRES_INITDB_ARGS="--encoding=UTF8"

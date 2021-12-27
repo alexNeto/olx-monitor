@@ -1,5 +1,6 @@
 package dev.alexneto.olxmonitor.olx.model;
 
+import dev.alexneto.olxmonitor.olx.MonitorType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,5 +18,7 @@ public class OlxMonitor {
     private Long messageId;
     @Column(unique = true)
     private String urlToMonitor;
+    @Enumerated(EnumType.STRING)
+    private MonitorType monitorType;
 }
 

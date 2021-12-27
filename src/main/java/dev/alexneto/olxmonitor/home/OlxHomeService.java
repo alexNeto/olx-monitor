@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,23 +36,19 @@ public class OlxHomeService {
         log.info("{} Started new verification", LOGTAG);
         List<OlxMonitor> olxModelList = olxMonitorRepository.findAll();
         olxModelList.forEach(i -> {
-            try {
-                List<String> urls = newHomeMonitorService.verifyNewItems(i.getUrlToMonitor());
-                urls.stream()
-                        .map(homeDetailCollectorService::getData)
-                        .forEach(homeResult -> {
-                            try {
-                                homeResult.setOlxMonitorId(i.getId());
-                                botHandler.sendMessage(createNewMessage(i.getChatId(), buildMessage(homeResult)));
-                                monitorResultRepository.save(homeResult);
-                                log.info("{} New result saved {}", LOGTAG, homeResult.getInternalId());
-                            } catch (Exception e) {
-                                log.error("{} A Error occurred during the update", LOGTAG, e);
-                            }
-                        });
-            } catch (IOException e) {
-                log.error("{} A Error occurred during the update", LOGTAG, e);
-            }
+            List<String> urls = newHomeMonitorService.verifyNewItems(i.getUrlToMonitor());
+            urls.stream()
+                    .map(homeDetailCollectorService::getData)
+                    .forEach(homeResult -> {
+                        try {
+                            homeResult.setOlxMonitorId(i.getId());
+                            botHandler.sendMessage(createNewMessage(i.getChatId(), buildMessage(homeResult)));
+                            monitorResultRepository.save(homeResult);
+                            log.info("{} New result saved {}", LOGTAG, homeResult.getInternalId());
+                        } catch (Exception e) {
+                            log.error("{} A Error occurred during the update", LOGTAG, e);
+                        }
+                    });
         });
         log.info("{} Verification completed", LOGTAG);
     }

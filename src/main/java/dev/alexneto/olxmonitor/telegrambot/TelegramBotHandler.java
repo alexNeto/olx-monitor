@@ -20,21 +20,23 @@ public class TelegramBotHandler extends TelegramLongPollingBot {
     @Value("${telegram-bot.token}")
     private String botToken;
 
-    private static final String LOGTAG = "[CHANNELHANDLERS]";
+    private static final String LOGTAG = "[TELEGRAM-BOT-HANDLER]";
 
     @Override
     public void onUpdateReceived(Update update) {
+        log.info("{} New update Received", LOGTAG);
         try {
             Message message = update.getMessage();
             if (message != null && message.hasText()) {
                 try {
                     onWaitingChannelMessage(message);
                 } catch (InvalidObjectException e) {
-                    log.error(LOGTAG, e);
+                    log.error("{} A Error occurred during update", LOGTAG, e);
                 }
             }
+            log.info("{} Update completed", LOGTAG);
         } catch (Exception e) {
-            log.error(LOGTAG, e);
+            log.error("{} A Error occurred during update", LOGTAG, e);
         }
     }
 
@@ -53,19 +55,21 @@ public class TelegramBotHandler extends TelegramLongPollingBot {
     }
 
     public void sendMessage(Message message) {
-        log.info("Sending message");
+        log.info("{} Sending message", LOGTAG);
+        try {
+            execute(buildSendMessage(message));
+            log.info("{} Message sent successfully", LOGTAG);
+        } catch (TelegramApiException e) {
+            log.error("{} Error sending the message", LOGTAG, e);
+        }
+    }
+
+    private SendMessage buildSendMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-
         sendMessage.setText(message.getText());
         sendMessage.enableMarkdown(true);
-
-        try {
-            execute(sendMessage);
-            log.info("Message sent successfully");
-        } catch (TelegramApiException e) {
-            log.error("Error sending the message", e);
-        }
+        return sendMessage;
     }
 }

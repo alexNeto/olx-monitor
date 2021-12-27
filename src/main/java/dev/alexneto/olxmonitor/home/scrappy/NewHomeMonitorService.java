@@ -2,11 +2,13 @@ package dev.alexneto.olxmonitor.home.scrappy;
 
 import dev.alexneto.olxmonitor.home.HomeResultRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,16 +18,24 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NewHomeMonitorService {
 
     private final HomeResultRepository monitorResultRepository;
 
-    public List<String> verifyNewItems(String url) throws IOException {
-        Document document = Jsoup.connect(url).get();
+    private static final String LOGTAG = "[NEW-HOME-MONITOR-SERVICE]";
 
-        Element adListContainer = document.getElementById("ad-list");
-        if (adListContainer != null) {
-            return filterNotSaved(adListContainer.childNodes());
+    public List<String> verifyNewItems(String url) {
+        try {
+            log.info("{} Starting data collection from url={}", LOGTAG, url);
+            Document document = Jsoup.connect(url).get();
+
+            Element adListContainer = document.getElementById("ad-list");
+            if (adListContainer != null) {
+                return filterNotSaved(adListContainer.childNodes());
+            }
+        } catch (IOException e) {
+            log.error("{} Error getting info from url={}", LOGTAG, url, e);
         }
         return new ArrayList<>();
     }
@@ -43,7 +53,8 @@ public class NewHomeMonitorService {
         return ((Element) node).getElementsByAttribute("data-lurker_list_id");
     }
 
-    private boolean isNotSaved(Node node) {
+    @Cacheable(cacheNames = "internal-id-is-not-saved")
+    public boolean isNotSaved(Node node) {
         return !monitorResultRepository.existsByInternalId(getInternalId(node));
     }
 

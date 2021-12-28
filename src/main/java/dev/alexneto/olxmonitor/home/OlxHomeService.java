@@ -4,6 +4,7 @@ import dev.alexneto.olxmonitor.home.model.HomeResult;
 import dev.alexneto.olxmonitor.home.model.dto.HomeResultDTO;
 import dev.alexneto.olxmonitor.home.scrappy.HomeDetailCollectorService;
 import dev.alexneto.olxmonitor.home.scrappy.NewHomeMonitorService;
+import dev.alexneto.olxmonitor.olx.MonitorType;
 import dev.alexneto.olxmonitor.olx.OlxMonitorRepository;
 import dev.alexneto.olxmonitor.olx.model.OlxMonitor;
 import dev.alexneto.olxmonitor.telegrambot.TelegramBotHandler;
@@ -35,22 +36,26 @@ public class OlxHomeService {
     public void verifyNewItems() {
         log.info("{} Started new verification", LOGTAG);
         List<OlxMonitor> olxModelList = olxMonitorRepository.findAll();
-        olxModelList.forEach(i -> {
-            List<String> urls = newHomeMonitorService.verifyNewItems(i.getUrlToMonitor());
-            urls.stream()
-                    .map(homeDetailCollectorService::getData)
-                    .forEach(homeResult -> {
-                        try {
-                            homeResult.setOlxMonitorId(i.getId());
-                            botHandler.sendMessage(createNewMessage(i.getChatId(), buildMessage(homeResult)));
-                            monitorResultRepository.save(homeResult);
-                            log.info("{} New result saved {}", LOGTAG, homeResult.getInternalId());
-                        } catch (Exception e) {
-                            log.error("{} A Error occurred during the update", LOGTAG, e);
-                        }
-                    });
-        });
+        olxModelList.stream()
+                .filter(i -> MonitorType.HOME.equals(i.getMonitorType()))
+                .forEach(this::verifyNewItem);
         log.info("{} Verification completed", LOGTAG);
+    }
+
+    private void verifyNewItem(OlxMonitor olxMonitor) {
+        List<String> urls = newHomeMonitorService.verifyNewItems(olxMonitor.getUrlToMonitor());
+        urls.stream()
+                .map(homeDetailCollectorService::getData)
+                .forEach(homeResult -> {
+                    try {
+                        homeResult.setOlxMonitorId(olxMonitor.getId());
+                        botHandler.sendMessage(createNewMessage(olxMonitor.getChatId(), buildMessage(homeResult)));
+                        monitorResultRepository.save(homeResult);
+                        log.info("{} New result saved {}", LOGTAG, homeResult.getInternalId());
+                    } catch (Exception e) {
+                        log.error("{} A Error occurred during the update", LOGTAG, e);
+                    }
+                });
     }
 
     private String buildMessage(HomeResult homeResult) {

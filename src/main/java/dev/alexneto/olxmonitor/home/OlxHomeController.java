@@ -20,4 +20,10 @@ public class OlxHomeController {
     public List<HomeResultDTO> getAllResult(@PathVariable long id) {
         return olxHomeService.findAllHomeResultByOlxModelId(id);
     }
+
+    @GetMapping("/check-new-results")
+    public String checkNewResults() {
+        olxHomeService.verifyNewItems();
+        return "ok";
+    }
 }

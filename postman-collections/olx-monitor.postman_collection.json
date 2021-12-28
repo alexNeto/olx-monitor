@@ -118,6 +118,25 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "check new results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/home-monitor/1/results",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"home-monitor",
+								"1",
+								"results"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

@@ -37,7 +37,7 @@ public class OlxCarService {
         log.info("{} Started new verification", LOGTAG);
         List<OlxMonitor> olxModelList = olxMonitorRepository.findAll();
         olxModelList.stream()
-                .filter(i -> MonitorType.HOME.equals(i.getMonitorType()))
+                .filter(i -> MonitorType.CAR.equals(i.getMonitorType()))
                 .forEach(this::verifyNewItem);
         log.info("{} Verification completed", LOGTAG);
     }

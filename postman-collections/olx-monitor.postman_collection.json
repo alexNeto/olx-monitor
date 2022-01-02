@@ -76,7 +76,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "    {\n        \"id\": 1,\n        \"username\": null,\n        \"chatId\": 358323464,\n        \"messageId\": null,\n        \"urlToMonitor\": \"https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/vale-do-paraiba/sao-jose-dos-campos/imoveis/aluguel/casas?pe=1600&ps=1000\",\n        \"monitorType\": \"HOME\"\n    }",
+							"raw": "    {\n        \"id\": 1,\n        \"username\": null,\n        \"chatId\": {{chatId}},\n        \"messageId\": null,\n        \"urlToMonitor\": \"{{urlToMonitor}}\",\n        \"monitorType\": \"HOME\"\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -125,6 +125,29 @@
 						"method": "GET",
 						"header": [],
 						"url": {
+							"raw": "{{url}}/home-monitor/check-new-results",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"home-monitor",
+								"check-new-results"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "car-monitor",
+			"item": [
+				{
+					"name": "get all results by olx-monitor-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
 							"raw": "{{url}}/home-monitor/1/results",
 							"host": [
 								"{{url}}"
@@ -133,6 +156,24 @@
 								"home-monitor",
 								"1",
 								"results"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "check new results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/home-monitor/check-new-results",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"home-monitor",
+								"check-new-results"
 							]
 						}
 					},

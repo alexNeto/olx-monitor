@@ -1,6 +1,6 @@
-package dev.alexneto.olxmonitor.home.scrappy;
+package dev.alexneto.olxmonitor.car.scrappy;
 
-import dev.alexneto.olxmonitor.home.HomeResultRepository;
+import dev.alexneto.olxmonitor.car.CarResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NewHomeMonitorService {
+public class CarMonitorService {
 
-    private final HomeResultRepository monitorResultRepository;
+    private final CarResultRepository monitorResultRepository;
 
-    private static final String LOGTAG = "[NEW-HOME-MONITOR-SERVICE]";
+    private static final String LOGTAG = "[NEW-CAR-MONITOR-SERVICE]";
 
     public List<String> verifyNewItems(String url) {
         try {
@@ -53,7 +53,7 @@ public class NewHomeMonitorService {
         return ((Element) node).getElementsByAttribute("data-lurker_list_id");
     }
 
-    @Cacheable(cacheNames = "internal-home-id-is-not-saved")
+    @Cacheable(cacheNames = "internal-car-id-is-not-saved")
     public boolean isNotSaved(Node node) {
         return !monitorResultRepository.existsByInternalId(getInternalId(node));
     }

@@ -13,12 +13,12 @@ services:
     image: olx-monitor:latest
     restart: always
     depends_on:
-      - database
+      - olx-monitor-database
       - nginx
     environment:
       - BOT_USERNAME=${BOT_USERNAME}
       - BOT_TOKEN=${BOT_TOKEN}
-  database:
+  olx-monitor-database:
     image: postgres:14.1
     container_name: olx-monitor-database
     restart: always

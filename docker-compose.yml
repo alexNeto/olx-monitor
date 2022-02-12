@@ -22,8 +22,6 @@ services:
     image: postgres:14.1
     container_name: olx-monitor-database
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_ROOT_PASSWORD=postgres
       - POSTGRES_PASSWORD=postgres

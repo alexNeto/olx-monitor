@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ public class OlxHomeService {
 
     private void verifyNewItem(OlxMonitor olxMonitor) {
         List<String> urls = newHomeMonitorService.verifyNewItems(olxMonitor.getUrlToMonitor());
+        Collections.reverse(urls);
         urls.stream()
                 .map(homeDetailCollectorService::getData)
                 .forEach(homeResult -> {

@@ -1,7 +1,7 @@
 version: "3.3"
 
 services:
-  nginx:
+  olx-monitor-nginx:
     image: nginx:1.21.1-alpine
     restart: always
     volumes:
@@ -14,7 +14,7 @@ services:
     restart: always
     depends_on:
       - olx-monitor-database
-      - nginx
+      - olx-monitor-nginx
     environment:
       - BOT_USERNAME=${BOT_USERNAME}
       - BOT_TOKEN=${BOT_TOKEN}

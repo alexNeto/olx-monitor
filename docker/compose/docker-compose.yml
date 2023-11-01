@@ -5,12 +5,14 @@ services:
     image: nginx:1.21.1-alpine
     restart: always
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - "3000:80"
   olx-monitor:
-    build: .
-    image: olx-monitor:latest
+    image: olx-monitor
+    build:
+      context: ../../
+      dockerfile: docker/api/Dockerfile
     restart: always
     depends_on:
       - olx-monitor-database
@@ -22,6 +24,8 @@ services:
     image: postgres:14.1
     container_name: olx-monitor-database
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_ROOT_PASSWORD=postgres
       - POSTGRES_PASSWORD=postgres
@@ -29,4 +33,5 @@ services:
       - POSTGRES_DB=olx-monitor-db
       - POSTGRES_INITDB_ARGS="--encoding=UTF8"
     volumes:
-      - ./db-data/:/var/lib/postgresql/data/
+      - ../../db-data/:/var/lib/postgresql/data/
+

@@ -24,17 +24,13 @@ public class HomeResult {
     private String price;
     @Column(columnDefinition = "TEXT")
     private String description;
-
     /**
      * Id used by olx to track ads
      */
     private String internalId;
-
     private String url;
-
     private String rooms;
     private String garageSize;
-
     private String zipCode;
     private String city;
     private String neighborhood;

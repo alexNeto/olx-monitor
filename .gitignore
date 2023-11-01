@@ -33,4 +33,6 @@ build/
 ### VS Code ###
 .vscode/
 
+### Code specific ###
+.env
 db-data

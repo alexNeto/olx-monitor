@@ -1,6 +1,11 @@
 package dev.alexneto.olxmonitor.home.scrappy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.alexneto.olxmonitor.home.HomeResultRepository;
+import dev.alexneto.olxmonitor.home.model.HomeResult;
+import dev.alexneto.olxmonitor.home.model.olxrawdata.Ad;
+import dev.alexneto.olxmonitor.home.model.olxrawdata.OlxHomeRawData;
+import dev.alexneto.olxmonitor.home.model.olxrawdata.Property;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -14,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,23 +34,53 @@ public class NewHomeMonitorService {
     public List<String> verifyNewItems(String url) {
         try {
             log.info("{} Starting data collection from url={}", LOGTAG, url);
-            Document document = Jsoup.connect(url).get();
 
-            Element adListContainer = document.getElementById("ad-list");
-            if (adListContainer != null) {
-                return filterNotSaved(adListContainer.childNodes());
-            }
+            Document document = Jsoup.connect(url).get();
+            String jsonAsString = document.getElementById("__NEXT_DATA__").childNode(0).toString();
+
+            List<HomeResult> homeResultList = new ObjectMapper().readValue(jsonAsString, OlxHomeRawData.class)
+                    .getProps().getPageProps().getAds()
+                    .stream().filter(Objects::nonNull)
+                    .map(this::toHomeResult)
+                    .collect(Collectors.toList());
+
+            return filterNotSaved(homeResultList);
+
         } catch (IOException e) {
             log.error("{} Error getting info from url={}", LOGTAG, url, e);
         }
         return new ArrayList<>();
     }
 
-    private List<String> filterNotSaved(List<Node> nodes) {
+    private HomeResult toHomeResult(Ad ad) {
+        HomeResult homeResult = new HomeResult();
+        homeResult.setTitle(ad.getTitle());
+        homeResult.setImage(ad.getThumbnail());
+        homeResult.setPrice(ad.getPrice());
+        homeResult.setDescription(ad.getSubject());
+        homeResult.setInternalId(Integer.toString(ad.getListId()));
+        homeResult.setUrl(ad.getUrl());
+        homeResult.setRooms(getProperty(ad, "rooms"));
+        homeResult.setGarageSize(getProperty(ad, "garage_spaces"));
+        return homeResult;
+    }
+
+    private static String getProperty(Ad ad, String property) {
+        String defaultValue = "N/A";
+        if (ad == null || ad.getProperties() == null || property == null) return defaultValue;
+        return ad.getProperties()
+                .stream()
+                .filter(p -> property.equalsIgnoreCase(p.name))
+                .map(Property::getValue)
+                .findFirst().orElse(defaultValue);
+    }
+
+    private List<String> filterNotSaved(List<HomeResult> nodes) {
         return nodes
                 .stream()
                 .filter(this::isNotSaved)
-                .map(this::getHref)
+                .map(HomeResult::getUrl)
+                .filter(Objects::nonNull)
                 .filter(i -> !"".equals(i))
                 .collect(Collectors.toList());
     }
@@ -54,15 +90,11 @@ public class NewHomeMonitorService {
     }
 
     @Cacheable(cacheNames = "internal-home-id-is-not-saved")
-    public boolean isNotSaved(Node node) {
+    public boolean isNotSaved(HomeResult node) {
         return !monitorResultRepository.existsByInternalId(getInternalId(node));
     }
 
-    private String getInternalId(Node node) {
-        return getContentElement(node).attr("data-lurker_list_id");
-    }
-
-    private String getHref(Node node) {
-        return getContentElement(node).attr("href");
+    private String getInternalId(HomeResult node) {
+        return node.getInternalId();
     }
 }

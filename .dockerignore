@@ -1,6 +1,5 @@
 db-data/
 postman-collections/
-src/
 .*
 mvn*
 

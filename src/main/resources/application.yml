@@ -7,5 +7,5 @@ spring:
     hibernate:
       ddl-auto: update
 telegram-bot:
-  username: ${BOT_USERNAME}
-  token: ${BOT_TOKEN}
+  username: optional:file:.env[BOT_USERNAME]
+  token: 5014015511:AAH3kQGXlnXWZEdaw3MqxEwRM7JcHsNHxQ4

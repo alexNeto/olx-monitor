@@ -8,4 +8,4 @@ spring:
       ddl-auto: update
 telegram-bot:
   username: optional:file:.env[BOT_USERNAME]
-  token: 5014015511:AAH3kQGXlnXWZEdaw3MqxEwRM7JcHsNHxQ4
+  token: optional:file:.env[BOT_TOKEN]
